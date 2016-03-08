@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.ws.rs.NotFoundException;
 
 /**
  *
@@ -22,7 +23,10 @@ public class BookFacade {
    }};
    
     public static Book getBook(String iSBN){
-    return books.get(iSBN);
+   Book book= books.get(iSBN);
+   if (book ==null)
+        throw new NotFoundException("ISBN NOT FOUND");
+   return book;
     }
     public static void createBook(Book book){
     books.putIfAbsent(book.getiSBN(), book);

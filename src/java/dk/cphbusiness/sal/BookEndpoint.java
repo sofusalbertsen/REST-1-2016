@@ -8,9 +8,8 @@ package dk.cphbusiness.sal;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dk.cphbusiness.sal.entity.Book;
+import dk.cphbusiness.sal.exception.NotFoundException;
 import dk.cphbusiness.sal.facade.BookFacade;
-import java.util.Collection;
-import java.util.List;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.PathParam;
@@ -42,14 +41,19 @@ public class BookEndpoint {
         gson = new GsonBuilder().setPrettyPrinting().create();
     }
 
-    /**
-     * Retrieves representation of an instance of dk.cphbusiness.sal.BookEndpoint
-     * @return an instance of java.lang.String
-     */
     @GET
     @Produces(MediaType.APPLICATION_JSON) //"application/json"
     public String getJson() {
         return gson.toJson(BookFacade.getAllBooks());
+    }
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON) //"application/json"
+    public String getBook(@PathParam("id") String iSBN) throws NotFoundException {
+        Book book =BookFacade.getBook(iSBN);
+        if (book ==null)
+            throw new NotFoundException("No book with that ISBN");
+        return gson.toJson(book);
     }
     
     @POST
@@ -66,13 +70,12 @@ public class BookEndpoint {
         BookFacade.deleteBook(iSBN);
     }
 
-    /**
-     * PUT method for updating or creating an instance of BookEndpoint
-     * @param content representation for the resource
-     * @return an HTTP response with content of the updated or created resource.
-     */
     @PUT
     @Consumes("application/json")
-    public void putJson(String content) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public String putJson(String bookJson){
+        Book book = gson.fromJson(bookJson, Book.class);
+        book=BookFacade.editBook(book);
+        return gson.toJson(book);
     }
 }

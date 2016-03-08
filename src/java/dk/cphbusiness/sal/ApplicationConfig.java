@@ -30,6 +30,8 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(dk.cphbusiness.sal.BookEndpoint.class);
+        resources.add(dk.cphbusiness.sal.exception.GeneralExceptionMapper.class);
+        resources.add(dk.cphbusiness.sal.exception.NotFoundExceptionMapper.class);
     }
     
 }
